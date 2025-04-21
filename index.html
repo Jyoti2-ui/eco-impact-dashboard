@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>EcoImpact Tracker</title>
+  <style>
+    :root {
+      --primary: #1a7d64;
+      --primary-light: #26b18f;
+      --secondary: #123f33;
+      --accent: #ffcc4d;
+      --light: #e8f5f0;
+      --dark: #0a2720;
+      --danger: #e74c3c;
+      --warning: #f39c12;
+      --success: #27ae60;
+      --info: #3498db;
+      --gray: #95a5a6;
+      --bg: #f5f9f8;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+      background-color: var(--bg);
+      color: var(--dark);
+      line-height: 1.6;
+    }
+    
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    header {
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      color: white;
+      padding: 20px 0;
+      margin-bottom: 30px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .header-content {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .logo {
+      display: flex;
+      align-items: center;
+    }
+    
+    .logo-icon {
+      width: 40px;
+      height: 40px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 15px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .logo-icon::before {
+      content: '🌍';
+      font-size: 24px;
+    }
+    
+    .logo-text h1 {
+      font-size: 24px;
+      margin-bottom: 5px;
+    }
+    
+    .tagline {
+      font-size: 14px;
+      opacity: 0.8;
+    }
+    
+    .date-display {
+      background-color: rgba(255, 255, 255, 0.2);
+      padding: 8px 15px;
+      border-radius: 20px;
+      font-size: 14px;
+    }
+    
+    section {
+      margin-bottom: 30px;
+    }
+    
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+      border-bottom: 2px solid var(--light);
+      padding-bottom: 10px;
+    }
+    
+    .section-title {
+      font-size: 20px;
+      color: var(--primary);
+    }
+    
+    .view-all {
+      color: var(--primary);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    .view-all:hover {
+      text-decoration: underline;
+    }
+    
+    /* Key Metrics */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 20px;
+    }
+    
+    .metric-card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .metric-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+    }
+    
+    .metric-icon {
+      margin-bottom: 15px;
+      font-size: 24px;
+    }
+    
+    .metric-title {
+      font-size: 14px;
+      color: var(--gray);
+      margin-bottom: 10px;
+    }
+    
+    .metric-value {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 5px;
+    }
+    
+    .metric-change {
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+    }
+    
+    .decrease {
+      color: var(--success);
+    }
+    
+    .increase {
+      color: var(--danger);
+    }
+    
+    /* Progress Bars */
+    .progress-section {
+      background-color: white;
+      padding: 25px;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .progress-container {
+      margin-bottom: 20px;
+    }
+    
+    .progress-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+    
+    .progress-title {
+      font-weight: 500;
+    }
+    
+    .progress-value {
+      font-weight: 500;
+    }
+    
+    .progress-bar {
+      height: 10px;
+      background-color: var(--light);
+      border-radius: 5px;
+      overflow: hidden;
+      position: relative;
+    }
+    
+    .progress-fill {
+      height: 100%;
+      border-radius: 5px;
+      position: relative;
+      animation: fillBar 2s ease-out forwards;
+    }
+    
+    @keyframes fillBar {
+      from { width: 0; }
+    }
+    
+    .progress-fill.emissions {
+      width: 65%;
+      background-color: var(--danger);
+    }
+    
+    .progress-fill.water {
+      width: 40%;
+      background-color: var(--info);
+    }
+    
+    .progress-fill.energy {
+      width: 75%;
+      background-color: var(--success);
+    }
+    
+    .progress-fill.waste {
+      width: 30%;
+      background-color: var(--warning);
+    }
+    
+    /* Country Comparison */
+    .country-comparison {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
+    .country-card {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .country-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 15px;
+    }
+    
+    .country-flag {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      margin-right: 10px;
+      background-color: var(--light);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .country-name {
+      font-weight: 500;
+    }
+    
+    .country-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    
+    .country-stat {
+      font-size: 12px;
+      color: var(--gray);
+    }
+    
+    .country-stat-value {
+      font-size: 16px;
+      font-weight: 500;
+      color: var(--dark);
+    }
+    
+    .stacked-bar {
+      height: 10px;
+      background-color: var(--light);
+      border-radius: 5px;
+      display: flex;
+      overflow: hidden;
+    }
+    
+    .stacked-segment {
+      height: 100%;
+    }
+    
+    .segment-coal { background-color: #555; width: 40%; }
+    .segment-oil { background-color: #8B4513; width: 30%; }
+    .segment-gas { background-color: #F4A460; width: 15%; }
+    .segment-renewable { background-color: var(--success); width: 15%; }
+    
+    .segment-coal-low { background-color: #555; width: 20%; }
+    .segment-oil-low { background-color: #8B4513; width: 15%; }
+    .segment-gas-low { background-color: #F4A460; width: 25%; }
+    .segment-renewable-high { background-color: var(--success); width: 40%; }
+    
+    /* Energy Mix Section */
+    .energy-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px;
+    }
+    
+    .pie-chart-container {
+      display: flex;
+      align-items: center;
+      background-color: white;
+      border-radius: 10px;
+      padding: 25px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .pie-chart {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      background: conic-gradient(
+        var(--danger) 0% 30%,
+        #F4A460 30% 50%,
+        #8B4513 50% 70%,
+        var(--success) 70% 100%
+      );
+      position: relative;
+    }
+    
+    .pie-chart-center {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 100px;
+      height: 100px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-weight: bold;
+      color: var(--dark);
+    }
+    
+    .pie-chart-legend {
+      margin-left: 30px;
+    }
+    
+    .legend-item {
+      display: flex;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    
+    .legend-color {
+      width: 12px;
+      height: 12px;
+      border-radius: 3px;
+      margin-right: 8px;
+    }
+    
+    .coal { background-color: var(--danger); }
+    .gas { background-color: #F4A460; }
+    .oil { background-color: #8B4513; }
+    .renewable { background-color: var(--success); }
+    
+    .legend-text {
+      font-size: 14px;
+    }
+    
+    .legend-value {
+      margin-left: auto;
+      font-size: 14px;
+      font-weight: 500;
+    }
+    
+    /* Timeline Section */
+    .timeline-container {
+      position: relative;
+      margin: 40px 0;
+      padding-left: 20px;
+    }
+    
+    .timeline-line {
+      position: absolute;
+      left: 2px;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background-color: var(--primary-light);
+    }
+    
+    .timeline-item {
+      position: relative;
+      margin-bottom: 30px;
+      padding-left: 30px;
+    }
+    
+    .timeline-item:last-child {
+      margin-bottom: 0;
+    }
+    
+    .timeline-dot {
+      position: absolute;
+      left: -5px;
+      top: 0;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background-color: var(--primary);
+      border: 2px solid white;
+    }
+    
+    .timeline-date {
+      position: absolute;
+      left: 30px;
+      top: -3px;
+      font-size: 14px;
+      font-weight: bold;
+      color: var(--primary);
+    }
+    
+    .timeline-content {
+      background-color: white;
+      border-radius: 10px;
+      padding: 20px;
+      margin-top: 20px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+    
+    .timeline-title {
+      font-size: 18px;
+      margin-bottom: 10px;
+      color: var(--dark);
+    }
+    
+    .timeline-description {
+      font-size: 14px;
+      color: var(--gray);
+    }
+    
+    /* Footer */
+    footer {
+      background-color: var(--secondary);
+      color: white;
+      padding: 40px 0;
+      margin-top: 40px;
+    }
+    
+    .footer-content {
+      display: grid;
+      grid-template-columns: 2fr 1fr 1fr;
+      gap: 40px;
+    }
+    
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    
+    .footer-logo-icon {
+      width: 30px;
+      height: 30px;
+      background-color: white;
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-right: 10px;
+    }
+    
+    .footer-logo-icon::before {
+      content: '🌍';
+      font-size: 18px;
+    }
+    
+    .footer-logo-text {
+      font-size: 18px;
+      font-weight: bold;
+    }
+    
+    .footer-description {
+      font-size: 14px;
+      opacity: 0.8;
+      margin-bottom: 20px;
+    }
+    
+    .footer-links-title {
+      font-size: 16px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      position: relative;
+      padding-bottom: 10px;
+    }
+    
+    .footer-links-title::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      width: 40px;
+      height: 2px;
+      background-color: var(--accent);
+    }
+    
+    .footer-links {
+      list-style: none;
+    }
+    
+    .footer-link {
+      margin-bottom: 10px;
+    }
+    
+    .footer-link a {
+      color: white;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: opacity 0.3s ease;
+      font-size: 14px;
+    }
+    
+    .footer-link a:hover {
+      opacity: 1;
+    }
+    
+    .copyright {
+      margin-top: 40px;
+      text-align: center;
+      font-size: 14px;
+      opacity: 0.6;
+      padding-top: 20px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+    
+    @media (max-width: 768px) {
+      .country-comparison,
+      .energy-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .footer-content {
+        grid-template-columns: 1fr;
+        gap: 30px;
+      }
+    }
+    
+    @media (max-width: 576px) {
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .header-content {
+        flex-direction: column;
+        text-align: center;
+      }
+      
+      .date-display {
+        margin-top: 15px;
+      }
+      
+      .pie-chart-container {
+        flex-direction: column;
+      }
+      
+      .pie-chart-legend {
+        margin-left: 0;
+        margin-top: 20px;
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="container header-content">
+      <div class="logo">
+        <div class="logo-icon"></div>
+        <div class="logo-text">
+          <h1>EcoImpact Tracker</h1>
+          <div class="tagline">Visualizing the Planet's Pulse</div>
+        </div>
+      </div>
+      <div class="date-display">April 21, 2025</div>
+    </div>
+  </header>
+  
+  <div class="container">
+    <!-- Key Metrics -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title">Key Environmental Metrics</h2>
+        <a href="#" class="view-all">View All</a>
+      </div>
+      
+      <div class="metrics-grid">
+        <div class="metric-card">
+          <div class="metric-icon">🌡️</div>
+          <div class="metric-title">Global Temperature Rise</div>
+          <div class="metric-value">1.1°C</div>
+          <div class="metric-change increase">↑ 0.2°C since 2020</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-icon">🌊</div>
+          <div class="metric-title">Sea Level Rise</div>
+          <div class="metric-value">3.4 mm/yr</div>
+          <div class="metric-change increase">↑ 0.1 mm/yr since 2020</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-icon">🌲</div>
+          <div class="metric-title">Forest Coverage</div>
+          <div class="metric-value">31.2%</div>
+          <div class="metric-change decrease">↓ 0.5% since 2020</div>
+        </div>
+        
+        <div class="metric-card">
+          <div class="metric-icon">♻️</div>
+          <div class="metric-title">Global Recycling Rate</div>
+          <div class="metric-value">32%</div>
+          <div class="metric-change increase">↑ 5% since 2020</div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Progress Bars -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title">Global Reduction Goals Progress</h2>
+        <a href="#" class="view-all">View Details</a>
+      </div>
+      
+      <div class="progress-section">
+        <div class="progress-container">
+          <div class="progress-header">
+            <div class="progress-title">CO₂ Emissions Reduction</div>
+            <div class="progress-value">65%</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill emissions"></div>
+          </div>
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-header">
+            <div class="progress-title">Water Conservation</div>
+            <div class="progress-value">40%</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill water"></div>
+          </div>
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-header">
+            <div class="progress-title">Renewable Energy Adoption</div>
+            <div class="progress-value">75%</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill energy"></div>
+          </div>
+        </div>
+        
+        <div class="progress-container">
+          <div class="progress-header">
+            <div class="progress-title">Waste Reduction</div>
+            <div class="progress-value">30%</div>
+          </div>
+          <div class="progress-bar">
+            <div class="progress-fill waste"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Country Comparison -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title">Country Comparison</h2>
+        <a href="#" class="view-all">View All Countries</a>
+      </div>
+      
+      <div class="country-comparison">
+        <div class="country-card">
+          <div class="country-header">
+            <div class="country-flag">🇺🇸</div>
+            <div class="country-name">United States</div>
+          </div>
+          
+          <div class="country-stats">
+            <div class="country-stat">
+              Population
+              <div class="country-stat-value">331.9M</div>
+            </div>
+            <div class="country-stat">
+              CO₂ Emissions
+              <div class="country-stat-value">4.8B tonnes</div>
+            </div>
+            <div class="country-stat">
+              Energy Consumption
+              <div class="country-stat-value">3,902 TWh</div>
+            </div>
+            <div class="country-stat">
+              Recycling Rate
+              <div class="country-stat-value">32%</div>
+            </div>
+          </div>
+          
+          <div class="country-stat">
+            Energy Mix
+          </div>
+          <div class="stacked-bar">
+            <div class="stacked-segment segment-coal"></div>
+            <div class="stacked-segment segment-oil"></div>
+            <div class="stacked-segment segment-gas"></div>
+            <div class="stacked-segment segment-renewable"></div>
+          </div>
+        </div>
+        
+        <div class="country-card">
+          <div class="country-header">
+            <div class="country-flag">🇩🇪</div>
+            <div class="country-name">Germany</div>
+          </div>
+          
+          <div class="country-stats">
+            <div class="country-stat">
+              Population
+              <div class="country-stat-value">83.2M</div>
+            </div>
+            <div class="country-stat">
+              CO₂ Emissions
+              <div class="country-stat-value">0.7B tonnes</div>
+            </div>
+            <div class="country-stat">
+              Energy Consumption
+              <div class="country-stat-value">524 TWh</div>
+            </div>
+            <div class="country-stat">
+              Recycling Rate
+              <div class="country-stat-value">67%</div>
+            </div>
+          </div>
+          
+          <div class="country-stat">
+            Energy Mix
+          </div>
+          <div class="stacked-bar">
+            <div class="stacked-segment segment-coal-low"></div>
+            <div class="stacked-segment segment-oil-low"></div>
+            <div class="stacked-segment segment-gas-low"></div>
+            <div class="stacked-segment segment-renewable-high"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Energy Mix Section -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title">Global Energy Mix</h2>
+        <a href="#" class="view-all">View Trends</a>
+      </div>
+      
+      <div class="energy-grid">
+        <div class="pie-chart-container">
+          <div class="pie-chart">
+            <div class="pie-chart-center">2025</div>
+          </div>
+          <div class="pie-chart-legend">
+            <div class="legend-item">
+              <div class="legend-color coal"></div>
+              <span class="legend-text">Coal</span>
+              <span class="legend-value">30%</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color gas"></div>
+              <span class="legend-text">Natural Gas</span>
+              <span class="legend-value">20%</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color oil"></div>
+              <span class="legend-text">Oil</span>
+              <span class="legend-value">20%</span>
+            </div>
+            <div class="legend-item">
+              <div class="legend-color renewable"></div>
+              <span class="legend-text">Renewables</span>
+              <span class="legend-value">30%</span>
+            </div>
+          </div>
+        </div>
+        
+        <div class="progress-section">
+          <div class="progress-container">
+            <div class="progress-header">
+              <div class="progress-title">Solar Energy Growth</div>
+              <div class="progress-value">+15.3%</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill energy" style="width: 85%"></div>
+            </div>
+          </div>
+          
+          <div class="progress-container">
+            <div class="progress-header">
+              <div class="progress-title">Wind Energy Growth</div>
+              <div class="progress-value">+12.7%</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill energy" style="width: 78%"></div>
+            </div>
+          </div>
+          
+          <div class="progress-container">
+            <div class="progress-header">
+              <div class="progress-title">Hydro Energy Growth</div>
+              <div class="progress-value">+5.2%</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill energy" style="width: 52%"></div>
+            </div>
+          </div>
+          
+          <div class="progress-container">
+            <div class="progress-header">
+              <div class="progress-title">Geothermal Energy Growth</div>
+              <div class="progress-value">+3.8%</div>
+            </div>
+            <div class="progress-bar">
+              <div class="progress-fill energy" style="width: 38%"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <!-- Timeline Section -->
+    <section>
+      <div class="section-header">
+        <h2 class="section-title">Environmental Milestones</h2>
+      </div>
+      
+      <div class="timeline-container">
+        <div class="timeline-line"></div>
+        
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">1997</div>
+          <div class="timeline-content">
+            <h3 class="timeline-title">Kyoto Protocol</h3>
+            <p class="timeline-description">International treaty which commits state parties to reduce greenhouse gas emissions. It was adopted in Kyoto, Japan on 11 December 1997.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">2015</div>
+          <div class="timeline-content">
+            <h3 class="timeline-title">Paris Agreement</h3>
+            <p class="timeline-description">International treaty on climate change with the goal of limiting global warming to well below 2°C, preferably to 1.5°C, compared to pre-industrial levels.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">2023</div>
+          <div class="timeline-content">
+            <h3 class="timeline-title">Global Plastic Treaty</h3>
+            <p class="timeline-description">International agreement to end plastic pollution through reduction in production, recyclability requirements, and waste management improvements.</p>
+          </div>
+        </div>
+        
+        <div class="timeline-item">
+          <div class="timeline-dot"></div>
+          <div class="timeline-date">2050</div>
+          <div class="timeline-content">
+            <h3 class="timeline-title">Net Zero Target</h3>
+            <p class="timeline-description">Global commitment to reach net-zero carbon emissions by balancing greenhouse gas emissions with removal or elimination of carbon from the atmosphere.</p>
+          </div>
+        </div>
+      </div>
+    </section>  
+  </div>
+  
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-content">
+        <div class="footer-about">
+          <div class="footer-logo">
+            <div class="footer-logo-icon"></div>
+            <div class="footer-logo-text">EcoImpact Tracker</div>
+          </div>
+          <p class="footer-description">
+            Monitoring and visualizing global environmental data to promote awareness 
+            and drive positive change for a sustainable future.
+          </p>
+        </div>
+        
+        <div class="footer-links-column">
+          <h3 class="footer-links-title">Resources</h3>
+          <ul class="footer-links">
+            <li class="footer-link"><a href="#">Data Sources</a></li>
+            <li class="footer-link"><a href="#">Methodology</a></li>
+            <li class="footer-link"><a href="#">Research Papers</a></li>
+            <li class="footer-link"><a href="#">Reports Archive</a></li>
+          </ul>
+        </div>
+        
+        <div class="footer-links-column">
+          <h3 class="footer-links-title">Company</h3>
+          <ul class="footer-links">
+            <li class="footer-link"><a href="#">About Us</a></li>
+            <li class="footer-link"><a href="#">Partners</a></li>
+            <li class="footer-link"><a href="#">Contact Us</a></li>
+            <li class="footer-link"><a href="#">Careers</a></li>
+          </ul>
+        </div>
+      </div>
+      
+      <div class="copyright">
+        © 2025 EcoImpact Tracker. All rights reserved.
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
